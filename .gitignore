@@ -1,0 +1,14 @@
+# Critical Files
+!.java
+
+# IDE Setting Files
+/.idea
+/.vscode
+
+# Compiled Java
+/out
+*.class
+*.jar
+
+# Sensitive Information
+*.env
