@@ -6,7 +6,7 @@
 /.vscode
 
 # Compiled Java
-/out
+/target
 *.class
 *.jar
 
