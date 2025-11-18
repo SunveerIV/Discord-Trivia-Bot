@@ -1,4 +1,5 @@
 
+import com.sunveer.discord.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -14,8 +15,9 @@ public class Main {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
         String token = dotenv.get("DISCORD_TOKEN");
-
         JDA api = JDABuilder.createDefault(token).enableIntents(GatewayIntent.MESSAGE_CONTENT).build();
+
+        ChatBot bot = new TriviaBot();
 
         api.addEventListener(new ListenerAdapter() {
             @Override
@@ -24,10 +26,8 @@ public class Main {
                 if (!event.getChannel().getName().equals(CHANNEL_NAME)) return;
 
                 String message = event.getMessage().getContentRaw();
-
-                if (message.startsWith("hi")) {
-                    event.getChannel().sendMessage("hello!").queue();
-                }
+                String response = bot.getResponse(message);
+                event.getChannel().sendMessage(response).queue();
             }
         });
     }
