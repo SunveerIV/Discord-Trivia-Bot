@@ -16,12 +16,12 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
 
     @Override
     public void incrementScore(String id, int amount) {
-
+        jedis.hincrBy(SCORE_KEY, id, amount);
     }
 
     @Override
     public int getScore(String id) {
-        return 0;
+        return Integer.parseInt(jedis.hget(SCORE_KEY, id));
     }
 
     @Override

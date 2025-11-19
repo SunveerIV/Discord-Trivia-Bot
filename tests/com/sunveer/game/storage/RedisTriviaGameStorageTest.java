@@ -36,4 +36,14 @@ class RedisTriviaGameStorageTest {
 
         assertEquals(0, tgs.getScores().size());
     }
+
+    @Test
+    void testAddingOneScore() {
+        Jedis jedis = mockRedis();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
+        String id = "Sunveer";
+        tgs.incrementScore(id, 2);
+
+        assertEquals(2, tgs.getScore(id));
+    }
 }
