@@ -21,7 +21,8 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
 
     @Override
     public int getScore(String id) {
-        return Integer.parseInt(jedis.hget(SCORE_KEY, id));
+        String value = jedis.hget(SCORE_KEY, id);
+        return value != null ? Integer.parseInt(value) : 0;
     }
 
     @Override

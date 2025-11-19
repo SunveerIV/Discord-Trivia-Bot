@@ -38,6 +38,15 @@ class RedisTriviaGameStorageTest {
     }
 
     @Test
+    void testGettingScoreFromEmptyKey() {
+        Jedis jedis = mockRedis();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
+        String id = "Sunveer";
+
+        assertEquals(0, tgs.getScore(id));
+    }
+
+    @Test
     void testAddingOneScore() {
         Jedis jedis = mockRedis();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
