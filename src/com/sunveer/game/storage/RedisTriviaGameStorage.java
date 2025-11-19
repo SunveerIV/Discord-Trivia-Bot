@@ -2,12 +2,16 @@ package com.sunveer.game.storage;
 
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RedisTriviaGameStorage implements TriviaGameStorage{
+    private static final String SCORE_KEY = "scores";
 
-    private Jedis db;
+    private Jedis jedis;
 
-    public RedisTriviaGameStorage() {
-
+    public RedisTriviaGameStorage(Jedis jedis) {
+        this.jedis = jedis;
     }
 
     @Override
@@ -18,5 +22,15 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     @Override
     public int getScore(String id) {
         return 0;
+    }
+
+    @Override
+    public Map<String, Integer> getScores() {
+        Map<String, String> map = jedis.hgetAll(SCORE_KEY);
+        Map<String, Integer> scores = new HashMap<>();
+        for (int i = 0; i < map.size(); i++) {
+
+        }
+        return scores;
     }
 }
