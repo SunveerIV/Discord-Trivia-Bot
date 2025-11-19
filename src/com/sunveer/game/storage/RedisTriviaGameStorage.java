@@ -29,8 +29,8 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     public Map<String, Integer> getScores() {
         Map<String, String> map = jedis.hgetAll(SCORE_KEY);
         Map<String, Integer> scores = new HashMap<>();
-        for (int i = 0; i < map.size(); i++) {
-
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
         }
         return scores;
     }

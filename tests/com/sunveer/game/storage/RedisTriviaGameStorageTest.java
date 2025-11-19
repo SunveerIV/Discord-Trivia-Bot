@@ -41,7 +41,7 @@ class RedisTriviaGameStorageTest {
     void testGettingScoreFromEmptyKey() {
         Jedis jedis = mockRedis();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
-        String id = "Sunveer";
+        String id = "Sunveer1";
 
         assertEquals(0, tgs.getScore(id));
     }
@@ -50,9 +50,25 @@ class RedisTriviaGameStorageTest {
     void testAddingOneScore() {
         Jedis jedis = mockRedis();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
-        String id = "Sunveer";
+        String id = "Sunveer2";
         tgs.incrementScore(id, 2);
 
         assertEquals(2, tgs.getScore(id));
+    }
+
+    @Test
+    void testAddingMultipleScores() {
+        Jedis jedis = mockRedis();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
+
+        String id1 = "Sunveer3";
+        String id2 = "Gortiz3";
+
+        tgs.incrementScore(id1, 2);
+        tgs.incrementScore(id2, 3);
+
+        assertEquals(2, tgs.getScore(id1));
+        assertEquals(3, tgs.getScore(id2));
+        assertEquals(2, tgs.getScores().size());
     }
 }
