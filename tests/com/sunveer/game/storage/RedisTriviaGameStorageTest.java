@@ -12,53 +12,54 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RedisTriviaGameStorageTest {
 
-    public static RedisServer rs;
-
-    @BeforeAll
-    static void setupRedis() throws IOException {
-        rs = new RedisServer(1);
-        rs.start();
-    }
-
-    @AfterAll
-    static void teardownRedis() throws IOException {
-        if (rs != null) rs.stop();
-    }
-
-    private Jedis mockRedis() {
-        return new Jedis("localhost", 1);
-    }
-
     @Test
-    void testNewRedisStorageIsEmpty() {
-        Jedis jedis = mockRedis();
+    void testNewRedisStorageIsEmpty() throws IOException {
+        RedisServer rs = new RedisServer(1);
+        rs.start();
+        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
+
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
 
         assertEquals(0, tgs.getScores().size());
+
+        rs.stop();
     }
 
     @Test
-    void testGettingScoreFromEmptyKey() {
-        Jedis jedis = mockRedis();
+    void testGettingScoreFromEmptyKey() throws IOException {
+        RedisServer rs = new RedisServer(1);
+        rs.start();
+        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
+
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
         String id = "Sunveer1";
 
         assertEquals(0, tgs.getScore(id));
+
+        rs.stop();
     }
 
     @Test
-    void testAddingOneScore() {
-        Jedis jedis = mockRedis();
+    void testAddingOneScore() throws IOException {
+        RedisServer rs = new RedisServer(1);
+        rs.start();
+        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
+
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
         String id = "Sunveer2";
         tgs.incrementScore(id, 2);
 
         assertEquals(2, tgs.getScore(id));
+
+        rs.stop();
     }
 
     @Test
-    void testAddingMultipleScores() {
-        Jedis jedis = mockRedis();
+    void testAddingMultipleScores() throws IOException {
+        RedisServer rs = new RedisServer(1);
+        rs.start();
+        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
+
         TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
 
         String id1 = "Sunveer3";
@@ -70,5 +71,7 @@ class RedisTriviaGameStorageTest {
         assertEquals(2, tgs.getScore(id1));
         assertEquals(3, tgs.getScore(id2));
         assertEquals(2, tgs.getScores().size());
+
+        rs.stop();
     }
 }
