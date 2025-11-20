@@ -1,7 +1,5 @@
 package com.sunveer.game;
 
-import org.jetbrains.annotations.NotNull;
-
 public class Answer {
     private final String answerText;
     private final boolean correct;
@@ -19,5 +17,16 @@ public class Answer {
     @Override
     public String toString() {
         return answerText;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+        if (getClass() != other.getClass()) return false;
+
+        Answer a = (Answer) other;
+        return this.correct == a.correct &&
+                this.answerText.equals(a.answerText);
     }
 }
