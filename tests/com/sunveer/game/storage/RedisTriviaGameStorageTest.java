@@ -1,12 +1,11 @@
 package com.sunveer.game.storage;
 
 import com.github.fppt.jedismock.RedisServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,6 +70,10 @@ class RedisTriviaGameStorageTest {
         assertEquals(2, tgs.getScore(id1));
         assertEquals(3, tgs.getScore(id2));
         assertEquals(2, tgs.getScores().size());
+
+        Map<String, Integer> scores = tgs.getScores();
+        assertEquals(2, scores.get(id1));
+        assertEquals(3, scores.get(id2));
 
         rs.stop();
     }
