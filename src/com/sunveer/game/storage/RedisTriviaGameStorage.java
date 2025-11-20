@@ -10,8 +10,8 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
 
     private Jedis jedis;
 
-    public RedisTriviaGameStorage(Jedis jedis) {
-        this.jedis = jedis;
+    public RedisTriviaGameStorage(String ip, int port) {
+        jedis = new Jedis(ip, port);
     }
 
     @Override

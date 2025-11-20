@@ -2,7 +2,6 @@ package com.sunveer.game.storage;
 
 import com.github.fppt.jedismock.RedisServer;
 import org.junit.jupiter.api.Test;
-import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,9 +14,7 @@ class RedisTriviaGameStorageTest {
     void testNewRedisStorageIsEmpty() throws IOException {
         RedisServer rs = new RedisServer(1);
         rs.start();
-        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
-
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
 
         assertEquals(0, tgs.getScores().size());
 
@@ -28,9 +25,8 @@ class RedisTriviaGameStorageTest {
     void testGettingScoreFromEmptyKey() throws IOException {
         RedisServer rs = new RedisServer(1);
         rs.start();
-        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
 
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
         String id = "Sunveer1";
 
         assertEquals(0, tgs.getScore(id));
@@ -42,9 +38,8 @@ class RedisTriviaGameStorageTest {
     void testAddingOneScore() throws IOException {
         RedisServer rs = new RedisServer(1);
         rs.start();
-        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
 
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
         String id = "Sunveer2";
         tgs.incrementScore(id, 2);
 
@@ -57,9 +52,7 @@ class RedisTriviaGameStorageTest {
     void testAddingMultipleScores() throws IOException {
         RedisServer rs = new RedisServer(1);
         rs.start();
-        Jedis jedis = new Jedis(rs.getHost(), rs.getBindPort());
-
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(jedis);
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
 
         String id1 = "Sunveer3";
         String id2 = "Gortiz3";
