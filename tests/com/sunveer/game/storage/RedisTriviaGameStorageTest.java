@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RedisTriviaGameStorageTest {
 
     @Test
-    void testNewRedisStorageIsEmpty() throws IOException {
+    void testNewRedisStorageIsEmpty() throws Exception {
         RedisServer rs = new RedisServer(1);
         rs.start();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
@@ -22,7 +22,7 @@ class RedisTriviaGameStorageTest {
     }
 
     @Test
-    void testGettingScoreFromEmptyKey() throws IOException {
+    void testGettingScoreFromEmptyKey() throws Exception {
         RedisServer rs = new RedisServer(1);
         rs.start();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
@@ -35,7 +35,7 @@ class RedisTriviaGameStorageTest {
     }
 
     @Test
-    void testAddingOneScore() throws IOException {
+    void testAddingOneScore() throws Exception {
         RedisServer rs = new RedisServer(1);
         rs.start();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
@@ -49,7 +49,7 @@ class RedisTriviaGameStorageTest {
     }
 
     @Test
-    void testAddingMultipleScores() throws IOException {
+    void testAddingMultipleScores() throws Exception {
         RedisServer rs = new RedisServer(1);
         rs.start();
         TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());

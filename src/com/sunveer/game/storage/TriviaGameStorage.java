@@ -1,9 +1,9 @@
 package com.sunveer.game.storage;
 
 public interface TriviaGameStorage {
-    void incrementScore(String id, int amount);
+    void incrementScore(String id, int amount) throws StorageException;
 
-    int getScore(String id);
+    int getScore(String id) throws StorageException;
 
-    java.util.Map<String, Integer> getScores();
+    java.util.Map<String, Integer> getScores() throws StorageException;
 }
