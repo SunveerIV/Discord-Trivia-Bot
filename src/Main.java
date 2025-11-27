@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class Main {
 
-    private static final String CHANNEL_NAME = "minhas_bot";
 
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
         String token = dotenv.get("DISCORD_TOKEN");
         JDA api = JDABuilder.createDefault(token).enableIntents(GatewayIntent.MESSAGE_CONTENT).build();
+
+        String channelName = dotenv.get("CHANNEL_NAME");
 
         ChatBot bot = new TriviaBot();
 
@@ -23,7 +24,7 @@ public class Main {
             @Override
             public void onMessageReceived(@NotNull MessageReceivedEvent event) {
                 if (event.getAuthor().isBot()) return;
-                if (!event.getChannel().getName().equals(CHANNEL_NAME)) return;
+                if (!event.getChannel().getName().equals(channelName)) return;
 
                 String message = event.getMessage().getContentRaw();
                 String response = bot.getResponse(message);
