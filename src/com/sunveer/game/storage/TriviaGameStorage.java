@@ -1,9 +1,17 @@
 package com.sunveer.game.storage;
 
 public interface TriviaGameStorage {
-    void incrementScore(String id, int amount) throws StorageException;
+    void startQuestion(com.sunveer.game.Question question) throws StorageException, QuestionInSessionException;
 
-    int getScore(String id) throws StorageException;
+    void endQuestion() throws StorageException, NoQuestionInSessionException;
 
-    java.util.Map<String, Integer> getScores() throws StorageException;
+    void incrementScore(String id, int amount) throws StorageException, NoQuestionInSessionException;
+
+    int getTotalScore(String id) throws StorageException;
+
+    java.util.Map<String, Integer> getTotalScores() throws StorageException;
+
+    int getCurrentQuestionScore(String id) throws StorageException, NoQuestionInSessionException;
+
+    java.util.Map<String, Integer> getCurrentQuestionScores() throws StorageException, NoQuestionInSessionException;
 }
