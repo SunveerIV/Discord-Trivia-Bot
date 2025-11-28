@@ -9,14 +9,9 @@ class QuestionTest {
     @Test
     void testNewInstance() {
         String questionText = "Why?";
-        Answer[] answers = {
-                new Answer("Yes", true),
-                new Answer("No", false)
-        };
-        Question q1 = new Question(questionText, answers);
-
-        assertEquals(questionText, q1.toString());
-        assertEquals(answers[0], q1.getCandidateAnswers()[0]);
-        assertEquals(answers[1], q1.getCandidateAnswers()[1]);
+        String answerText = "Because.";
+        Question q = new Question(new String(questionText), new String(answerText));
+        assertEquals(questionText, q.questionText());
+        assertEquals(answerText, q.answerText());
     }
 }
