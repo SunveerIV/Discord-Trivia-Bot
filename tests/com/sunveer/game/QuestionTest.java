@@ -9,14 +9,18 @@ class QuestionTest {
     @Test
     void testNewInstance() {
         String questionText = "Why?";
-        Answer[] answers = {
-                new Answer("Yes", true),
-                new Answer("No", false)
-        };
-        Question q1 = new Question(questionText, answers);
+        String answerText = "Because.";
+        Question q = new QuestionStruct(new String(questionText), new String(answerText));
+        assertEquals(questionText, q.questionText());
+        assertEquals(answerText, q.answerText());
+    }
 
-        assertEquals(questionText, q1.toString());
-        assertEquals(answers[0], q1.getCandidateAnswers()[0]);
-        assertEquals(answers[1], q1.getCandidateAnswers()[1]);
+    @Test
+    void testGettingNewQuestionFromApi() throws Exception {
+        Question q = QuestionCreator.newQuestion();
+        assertNotNull(q.questionText());
+        assertNotNull(q.answerText());
+        System.out.println(q.questionText());
+        System.out.println(q.answerText());
     }
 }

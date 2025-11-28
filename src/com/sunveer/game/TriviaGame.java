@@ -13,7 +13,7 @@ public class TriviaGame {
         
     }
 
-    public void submitAnswer(String player, AnswerChoice answer) {
+    public void submitAnswer(String player) {
 
     }
 
