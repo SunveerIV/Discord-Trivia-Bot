@@ -63,6 +63,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         if (questionIsInSession()) throw new QuestionInSessionException();
 
         try {
+            jedis.set(CURRENT_GAME_KEY, LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             jedis.set(CURRENT_QUESTION_TEXT_KEY, question.questionText());
             jedis.set(CURRENT_ANSWER_TEXT_KEY, question.answerText());
         } catch (JedisException e) {
@@ -75,7 +76,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         if (!questionIsInSession()) throw new NoQuestionInSessionException();
 
         try {
-            jedis.del(CURRENT_GAME_KEY);
+            jedis.del(currentGameCode);
             jedis.del(CURRENT_QUESTION_TEXT_KEY);
             jedis.del(CURRENT_ANSWER_TEXT_KEY);
         } catch (JedisException e) {
@@ -89,7 +90,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
 
         try {
             jedis.hincrBy(SCORE_KEY, id, amount);
-            jedis.hincrBy(CURRENT_GAME_KEY, id, amount);
+            jedis.hincrBy(currentGameCode, id, amount);
         } catch (JedisException e) {
             throw new StorageException();
         }
@@ -124,7 +125,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         if (!questionIsInSession()) throw new NoQuestionInSessionException();
 
         try {
-            String value = jedis.hget(CURRENT_GAME_KEY, id);
+            String value = jedis.hget(currentGameCode, id);
             return value != null ? Integer.parseInt(value) : 0;
         } catch (JedisException e) {
             throw new StorageException();
@@ -136,7 +137,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         if (!questionIsInSession()) throw new NoQuestionInSessionException();
 
         try {
-            Map<String, String> map = jedis.hgetAll(CURRENT_GAME_KEY);
+            Map<String, String> map = jedis.hgetAll(currentGameCode);
             Map<String, Integer> scores = new HashMap<>();
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
