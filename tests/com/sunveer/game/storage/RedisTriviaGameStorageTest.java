@@ -42,7 +42,7 @@ class RedisTriviaGameStorageTest {
 
         String id = "Sunveer1";
 
-        assertEquals(0, tgs.getTotalScore(id));
+        assertNull(tgs.getTotalScores().get(id));
         assertEquals(0, tgs.getTotalScores().size());
 
         rs.stop();
@@ -122,8 +122,8 @@ class RedisTriviaGameStorageTest {
         String id = "Sunveer3";
         tgs.incrementScore(id, 2);
 
-        assertEquals(2, tgs.getCurrentQuestionScore(id));
-        assertEquals(2, tgs.getTotalScore(id));
+        assertEquals(2, tgs.getCurrentQuestionScores().get(id));
+        assertEquals(2, tgs.getTotalScores().get(id));
 
         rs.stop();
     }
@@ -142,8 +142,8 @@ class RedisTriviaGameStorageTest {
         tgs.incrementScore(id1, 2);
         tgs.incrementScore(id2, 3);
 
-        assertEquals(2, tgs.getTotalScore(id1));
-        assertEquals(3, tgs.getTotalScore(id2));
+        assertEquals(2, tgs.getTotalScores().get(id1));
+        assertEquals(3, tgs.getTotalScores().get(id2));
         assertEquals(2, tgs.getTotalScores().size());
 
         Map<String, Integer> scores = tgs.getTotalScores();
@@ -177,10 +177,10 @@ class RedisTriviaGameStorageTest {
         tgs.incrementScore(id1, 1);
         tgs.incrementScore(id2, 3);
 
-        assertEquals(1, tgs.getCurrentQuestionScore(id1));
-        assertEquals(3, tgs.getCurrentQuestionScore(id2));
-        assertEquals(3, tgs.getTotalScore(id1));
-        assertEquals(6, tgs.getTotalScore(id2));
+        assertEquals(1, tgs.getCurrentQuestionScores().get(id1));
+        assertEquals(3, tgs.getCurrentQuestionScores().get(id2));
+        assertEquals(3, tgs.getTotalScores().get(id1));
+        assertEquals(6, tgs.getTotalScores().get(id2));
 
         rs.stop();
     }

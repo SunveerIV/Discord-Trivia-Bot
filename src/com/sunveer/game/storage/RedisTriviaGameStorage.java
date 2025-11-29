@@ -97,16 +97,6 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     }
 
     @Override
-    public int getTotalScore(String id) throws StorageException {
-        try {
-            String value = jedis.hget(SCORE_KEY, id);
-            return value != null ? Integer.parseInt(value) : 0;
-        } catch (JedisException e) {
-            throw new StorageException();
-        }
-    }
-
-    @Override
     public Map<String, Integer> getTotalScores() throws StorageException {
         try {
             Map<String, String> map = jedis.hgetAll(SCORE_KEY);
@@ -115,18 +105,6 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
                 scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
             }
             return scores;
-        } catch (JedisException e) {
-            throw new StorageException();
-        }
-    }
-
-    @Override
-    public int getCurrentQuestionScore(String id) throws StorageException, NoQuestionInSessionException {
-        if (!questionIsInSession()) throw new NoQuestionInSessionException();
-
-        try {
-            String value = jedis.hget(currentGameCode, id);
-            return value != null ? Integer.parseInt(value) : 0;
         } catch (JedisException e) {
             throw new StorageException();
         }

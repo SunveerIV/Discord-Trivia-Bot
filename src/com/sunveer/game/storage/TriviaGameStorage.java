@@ -9,11 +9,7 @@ public interface TriviaGameStorage {
 
     void incrementScore(String id, int amount) throws StorageException, NoQuestionInSessionException;
 
-    int getTotalScore(String id) throws StorageException;
-
     java.util.Map<String, Integer> getTotalScores() throws StorageException;
-
-    int getCurrentQuestionScore(String id) throws StorageException, NoQuestionInSessionException;
 
     java.util.Map<String, Integer> getCurrentQuestionScores() throws StorageException, NoQuestionInSessionException;
 }
