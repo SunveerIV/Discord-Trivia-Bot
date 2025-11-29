@@ -184,4 +184,27 @@ class RedisTriviaGameStorageTest {
 
         rs.stop();
     }
+
+    @Test
+    void testQuestionGetsDeletedAfterEndingQuestion() throws Exception{
+        RedisServer rs = new RedisServer(93);
+        rs.start();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+
+        assertDoesNotThrow(() -> {
+            tgs.startQuestion(MOCK_QUESTION);
+        });
+        Question currentQuestion = tgs.getCurrentQuestion();
+        assertEquals("Why?", currentQuestion.questionText());
+        assertEquals("Because.", currentQuestion.answerText());
+
+        assertDoesNotThrow(() -> {
+            tgs.endQuestion();
+        });
+        assertThrows(NoQuestionInSessionException.class, () -> {
+            tgs.getCurrentQuestion();
+        });
+
+        rs.stop();
+    }
 }

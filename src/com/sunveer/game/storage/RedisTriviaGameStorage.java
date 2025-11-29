@@ -38,6 +38,27 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     }
 
     @Override
+    public Question getCurrentQuestion() throws StorageException, NoQuestionInSessionException {
+        if (!questionIsInSession()) throw new NoQuestionInSessionException();
+
+        try {
+            return new Question() {
+                @Override
+                public String questionText() {
+                    return jedis.get(CURRENT_QUESTION_TEXT_KEY);
+                }
+
+                @Override
+                public String answerText() {
+                    return jedis.get(CURRENT_ANSWER_TEXT_KEY);
+                }
+            };
+        } catch (JedisException e) {
+            throw new StorageException();
+        }
+    }
+
+    @Override
     public void startQuestion(Question question) throws StorageException, QuestionInSessionException {
         if (questionIsInSession()) throw new QuestionInSessionException();
 
