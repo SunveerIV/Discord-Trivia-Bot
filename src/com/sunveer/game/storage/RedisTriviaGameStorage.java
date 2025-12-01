@@ -102,7 +102,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
             Map<String, String> map = jedis.hgetAll(SCORE_KEY);
             Map<String, Integer> scores = new HashMap<>();
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
+                scores.put(entry.getKey(), parseOrZero(entry.getValue()));
             }
             return scores;
         } catch (JedisException e) {
@@ -118,7 +118,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
             Map<String, String> map = jedis.hgetAll(currentGameCode);
             Map<String, Integer> scores = new HashMap<>();
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
+                scores.put(entry.getKey(), parseOrZero(entry.getValue()));
             }
             return scores;
         } catch (JedisException e) {
@@ -130,5 +130,14 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         String q = jedis.get(CURRENT_QUESTION_TEXT_KEY);
         String a = jedis.get(CURRENT_ANSWER_TEXT_KEY);
         return q != null || a != null;
+    }
+
+    private static int parseOrZero(String s) {
+        if (s == null) return 0;
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }
