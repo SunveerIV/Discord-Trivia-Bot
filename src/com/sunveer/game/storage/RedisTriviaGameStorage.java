@@ -34,6 +34,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         if (currentGameCode == null) {
             try {
                 this.currentGameCode = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                jedis.set(CURRENT_GAME_KEY, this.currentGameCode);
                 Question nextQuestion = QuestionCreator.newQuestion();
                 jedis.set(CURRENT_QUESTION_TEXT_KEY, nextQuestion.questionText());
                 jedis.set(CURRENT_ANSWER_TEXT_KEY, nextQuestion.answerText());
