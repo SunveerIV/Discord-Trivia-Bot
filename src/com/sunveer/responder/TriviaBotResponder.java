@@ -19,6 +19,8 @@ public class TriviaBotResponder implements Responder {
                 return help();
             } else if (message.toLowerCase().startsWith("!sub")) {
                 return submit(message.substring(5), id);
+            } else if (message.toLowerCase().startsWith("!rules")) {
+                return rules();
             } else {
                 return "Invalid message! Type `!help` for a list of commands.";
             }
@@ -31,6 +33,16 @@ public class TriviaBotResponder implements Responder {
         return "`!help` - Shows all commands you can use.\n" +
                 "`!rules` - Shows all rules for the game.\n" +
                 "`!sub` - submits an answer for the question.\n";
+    }
+
+    private String rules() {
+        return "The rules are simple: Everything is allowed!\n\n" +
+                "This includes:\n" +
+                " ⋅ AI\n" +
+                " ⋅ Google\n" +
+                " ⋅ Your brain\n" +
+                " ⋅ Other people's answers\n\n" +
+                "The logic is that if you already know the answer, you have an advantage, which takes less time than AI.";
     }
 
     private String submit(String answer, String id) throws InternalServerException {
