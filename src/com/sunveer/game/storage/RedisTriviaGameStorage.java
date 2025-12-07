@@ -1,6 +1,8 @@
 package com.sunveer.game.storage;
 
 import com.sunveer.game.Question;
+import com.sunveer.game.QuestionCreator;
+import com.sunveer.game.QuestionNotAvailableException;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
@@ -30,8 +32,16 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     private void initializeCurrentGameCode() throws JedisException {
         String currentGameCode = jedis.get(CURRENT_GAME_KEY);
         if (currentGameCode == null) {
-            this.currentGameCode = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            return;
+            try {
+                this.currentGameCode = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                jedis.set(CURRENT_GAME_KEY, this.currentGameCode);
+                Question nextQuestion = QuestionCreator.newQuestion();
+                jedis.set(CURRENT_QUESTION_TEXT_KEY, nextQuestion.questionText());
+                jedis.set(CURRENT_ANSWER_TEXT_KEY, nextQuestion.answerText());
+                return;
+            } catch (QuestionNotAvailableException e) {
+                throw new RuntimeException("Question Not Available", e);
+            }
         }
 
         this.currentGameCode = currentGameCode;
@@ -102,7 +112,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
             Map<String, String> map = jedis.hgetAll(SCORE_KEY);
             Map<String, Integer> scores = new HashMap<>();
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
+                scores.put(entry.getKey(), parseOrZero(entry.getValue()));
             }
             return scores;
         } catch (JedisException e) {
@@ -118,7 +128,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
             Map<String, String> map = jedis.hgetAll(currentGameCode);
             Map<String, Integer> scores = new HashMap<>();
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                scores.put(entry.getKey(), Integer.parseInt(entry.getValue()));
+                scores.put(entry.getKey(), parseOrZero(entry.getValue()));
             }
             return scores;
         } catch (JedisException e) {
@@ -130,5 +140,14 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         String q = jedis.get(CURRENT_QUESTION_TEXT_KEY);
         String a = jedis.get(CURRENT_ANSWER_TEXT_KEY);
         return q != null || a != null;
+    }
+
+    private static int parseOrZero(String s) {
+        if (s == null) return 0;
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

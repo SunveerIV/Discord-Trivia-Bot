@@ -1,5 +1,6 @@
 package com.sunveer.discord;
 
+import com.sunveer.game.TriviaGame;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -7,7 +8,7 @@ public class TriviaBot extends ListenerAdapter {
 
     private final String channelName;
 
-    public TriviaBot(String channelName) {
+    public TriviaBot(TriviaGame tg, String channelName) {
         this.channelName = channelName;
     }
 

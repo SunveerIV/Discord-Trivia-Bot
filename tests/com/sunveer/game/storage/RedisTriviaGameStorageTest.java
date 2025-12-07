@@ -42,7 +42,7 @@ class RedisTriviaGameStorageTest {
 
         String id = "Sunveer1";
 
-        assertNull(tgs.getTotalScores().get(id));
+        assertEquals(0, tgs.getTotalScores().get(id));
         assertEquals(0, tgs.getTotalScores().size());
 
         rs.stop();
