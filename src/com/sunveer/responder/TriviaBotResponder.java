@@ -48,11 +48,11 @@ public class TriviaBotResponder implements Responder {
     private String submit(String answer, String id) throws InternalServerException {
         try {
             game.submitAnswer(id, answer);
+            return String.format(":white_check_mark: Correct, %s!", id);
         } catch (IncorrectAnswerException e) {
             return "Incorrect Answer.";
         } catch (QuestionExpiredException e) {
             return "No Question In Session Right Now!";
         }
-        return String.format("Correct, %s!", id);
     }
 }
