@@ -1,5 +1,5 @@
 package com.sunveer.responder;
 
 public interface Responder {
-    String response(String input);
+    String response(String message, String id);
 }

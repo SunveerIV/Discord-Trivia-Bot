@@ -60,6 +60,8 @@ public class TriviaGame {
     }
 
     private static boolean answerIsCorrect(String input, String correct) {
-        return input.equals(correct);
+        String inputLowerCase = input.toLowerCase();
+        String correctLowerCase = correct.toLowerCase();
+        return inputLowerCase.contains(correctLowerCase);
     }
 }
