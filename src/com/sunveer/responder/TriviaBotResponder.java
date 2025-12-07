@@ -15,14 +15,22 @@ public class TriviaBotResponder implements Responder {
 
     public String response(String message, String id) {
         try {
-            if (message.toLowerCase().startsWith("!sub")) {
+            if (message.toLowerCase().startsWith("!help")) {
+                return help();
+            } else if (message.toLowerCase().startsWith("!sub")) {
                 return submit(message.substring(5), id);
+            } else {
+                return "Invalid message! Type `!help` for a list of commands.";
             }
-
         } catch (InternalServerException e) {
             return "Internal error. Please try again later. Sorry!";
         }
-        return "Invalid message! Type `!help` for a list of commands.";
+    }
+
+    private String help() {
+        return "`!help` - Shows all commands you can use.\n" +
+                "`!rules` - Shows all rules for the game.\n" +
+                "`!sub` - submits an answer for the question.\n";
     }
 
     private String submit(String answer, String id) throws InternalServerException {
