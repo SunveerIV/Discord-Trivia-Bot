@@ -22,28 +22,6 @@ class TriviaGameTest {
     };
 
     @Test
-    void testSubmittingAnswerWithNoQuestionInSession() throws Exception {
-        RedisServer rs = new RedisServer(1);
-        rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
-        TriviaGame tg = new TriviaGame(tgs);
-
-        String id = "a";
-
-        assertThrows(QuestionExpiredException.class, () -> {
-            tg.submitAnswer(id, "b");
-        });
-
-        assertEquals(0, tg.getScore(id));
-        assertEquals(0, tg.getTotalLeaderboard().size());
-        assertThrows(QuestionExpiredException.class, () -> {
-            tg.getCurrentQuestionLeaderboard();
-        });
-
-        rs.stop();
-    }
-
-    @Test
     void testSubmittingAnswerWithQuestionInSession() throws Exception {
         RedisServer rs = new RedisServer(1);
         rs.start();
@@ -51,7 +29,17 @@ class TriviaGameTest {
         TriviaGame tg = new TriviaGame(tgs);
 
         String id = "a";
+        String answer = tgs.getCurrentQuestion().answerText();
 
+        assertDoesNotThrow(() -> {
+            tg.submitAnswer(id, new String(answer));
+        });
+
+        assertEquals(1, tg.getScore(id));
+        assertEquals(1, tg.getTotalLeaderboard().size());
+        assertDoesNotThrow(() -> {
+            tg.getCurrentQuestionLeaderboard();
+        });
 
         rs.stop();
     }

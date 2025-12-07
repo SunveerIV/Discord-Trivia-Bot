@@ -32,10 +32,10 @@ public class TriviaGame {
     }
 
     public int getScore(String id) throws InternalServerException{
+
         try {
-            return tgs.getTotalScores().get(id);
-        } catch (NullPointerException e) {
-            return 0;
+            Integer value = tgs.getTotalScores().get(id);
+            return value == null ? 0 : value;
         } catch (StorageException e) {
             throw new InternalServerException();
         }

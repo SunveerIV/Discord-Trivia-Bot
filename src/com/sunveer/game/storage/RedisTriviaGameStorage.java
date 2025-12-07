@@ -1,6 +1,8 @@
 package com.sunveer.game.storage;
 
 import com.sunveer.game.Question;
+import com.sunveer.game.QuestionCreator;
+import com.sunveer.game.QuestionNotAvailableException;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
@@ -30,8 +32,15 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     private void initializeCurrentGameCode() throws JedisException {
         String currentGameCode = jedis.get(CURRENT_GAME_KEY);
         if (currentGameCode == null) {
-            this.currentGameCode = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            return;
+            try {
+                this.currentGameCode = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                Question nextQuestion = QuestionCreator.newQuestion();
+                jedis.set(CURRENT_QUESTION_TEXT_KEY, nextQuestion.questionText());
+                jedis.set(CURRENT_ANSWER_TEXT_KEY, nextQuestion.answerText());
+                return;
+            } catch (QuestionNotAvailableException e) {
+                throw new RuntimeException("Question Not Available", e);
+            }
         }
 
         this.currentGameCode = currentGameCode;
