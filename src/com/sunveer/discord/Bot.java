@@ -26,7 +26,7 @@ public class Bot extends ListenerAdapter {
         if (!event.getChannel().getName().equals(channelName)) return;
 
         String message = event.getMessage().getContentRaw();
-        String response = responder.response(message);
+        String response = responder.response(message, event.getAuthor().getName());
         event.getChannel().sendMessage(response).queue();
     }
 }
