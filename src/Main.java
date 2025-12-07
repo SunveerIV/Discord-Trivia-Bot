@@ -3,6 +3,8 @@ import com.sunveer.discord.*;
 import com.sunveer.game.TriviaGame;
 import com.sunveer.game.storage.RedisTriviaGameStorage;
 import com.sunveer.game.storage.TriviaGameStorage;
+import com.sunveer.responder.Responder;
+import com.sunveer.responder.TriviaBotResponder;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Main {
@@ -16,6 +18,7 @@ public class Main {
 
         TriviaGameStorage tgs = new RedisTriviaGameStorage("192.168.0.90", 1236);
         TriviaGame tg = new TriviaGame(tgs);
-        TriviaBot tb = new TriviaBot(token, tg, channelName);
+        Responder tbr = new TriviaBotResponder(tg);
+        new Bot(token, tbr, channelName);
     }
 }
