@@ -82,9 +82,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     }
 
     @Override
-    public void endQuestion() throws StorageException, NoQuestionInSessionException {
-        if (!questionIsInSession()) throw new NoQuestionInSessionException();
-
+    public void endQuestion() throws StorageException {
         try {
             jedis.del(currentGameCode);
             jedis.del(CURRENT_QUESTION_TEXT_KEY);

@@ -5,7 +5,7 @@ public interface TriviaGameStorage {
 
     void startQuestion(com.sunveer.game.Question question) throws StorageException, QuestionInSessionException;
 
-    void endQuestion() throws StorageException, NoQuestionInSessionException;
+    void endQuestion() throws StorageException;
 
     void incrementScore(String id, int amount) throws StorageException, NoQuestionInSessionException;
 

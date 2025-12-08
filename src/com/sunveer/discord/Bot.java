@@ -3,9 +3,13 @@ package com.sunveer.discord;
 import com.sunveer.responder.Responder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import java.util.List;
 
 public class Bot extends ListenerAdapter {
 
@@ -19,6 +23,19 @@ public class Bot extends ListenerAdapter {
         this.responder = responder;
         this.channelName = channelName;
     }
+
+    @Override
+    public void onReady(ReadyEvent event) {
+        List<TextChannel> channels = event.getJDA().getTextChannelsByName(channelName, true);
+
+        if (channels.isEmpty()) {
+            System.out.println("No channel found with that name.");
+            return;
+        }
+        TextChannel channel = channels.getFirst();
+        channel.sendMessage(responder.initialPrompt()).queue();
+    }
+
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
