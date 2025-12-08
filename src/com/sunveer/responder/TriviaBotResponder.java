@@ -2,6 +2,9 @@ package com.sunveer.responder;
 
 import com.sunveer.game.*;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class TriviaBotResponder implements Responder {
     private static final String ERROR_MESSAGE = "Internal error. Please try again later. Sorry!";
 
@@ -35,6 +38,8 @@ public class TriviaBotResponder implements Responder {
                 return start();
             } else if (message.toLowerCase().startsWith("!score")) {
                 return score(id);
+            } else if (message.toLowerCase().startsWith("!leaderboard")) {
+                return leaderboard();
             } else {
                 return "Invalid message! Type `!help` for a list of commands.";
             }
@@ -54,9 +59,10 @@ public class TriviaBotResponder implements Responder {
     private String help() {
         return "`!help` - Shows all commands you can use.\n" +
                 "`!rules` - Shows all rules for the game.\n" +
-                "`!sub` - submits an answer for the question.\n" +
-                "`!start` - Starts a game if one isn't already running." +
-                "`!score` - States your individual overall score.";
+                "`!sub` - Submits an answer for the question.\n" +
+                "`!start` - Starts a game if one isn't already running.\n" +
+                "`!score` - States your individual overall score.\n" +
+                "`!leaderboard` - Shows the top 10 leaderboard for overall score.";
 
     }
 
@@ -89,6 +95,22 @@ public class TriviaBotResponder implements Responder {
             if (score == null) return "0";
 
             return String.format("%s, your score is: %s", id, score.toString());
+        } catch (InternalServerException e) {
+            return ERROR_MESSAGE;
+        }
+    }
+
+    private String leaderboard() {
+        try {
+            Map<String, Integer> scores = game.getTotalLeaderboard();
+
+            return scores.entrySet()
+                    .stream()
+                    .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                    .limit(10)
+                    .map(entry -> entry.getKey() + ": " + entry.getValue())
+                    .collect(Collectors.joining("\n"));
+
         } catch (InternalServerException e) {
             return ERROR_MESSAGE;
         }
