@@ -16,7 +16,10 @@ public class Main {
 
         String channelName = dotenv.get("CHANNEL_NAME");
 
-        TriviaGameStorage tgs = new RedisTriviaGameStorage("192.168.0.90", 1236);
+        String host = dotenv.get("HOST");
+        String port = dotenv.get("PORT");
+
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(host, Integer.parseInt(port));
         TriviaGame tg = new TriviaGame(tgs);
         Responder tbr = new TriviaBotResponder(tg);
         new Bot(token, tbr, channelName);

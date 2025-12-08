@@ -32,8 +32,10 @@ public class Bot extends ListenerAdapter {
             System.out.println("No channel found with that name.");
             return;
         }
-        TextChannel channel = channels.getFirst();
-        channel.sendMessage(responder.initialPrompt()).queue();
+
+        for (TextChannel channel : channels) {
+            channel.sendMessage(responder.initialPrompt()).queue();
+        }
     }
 
 

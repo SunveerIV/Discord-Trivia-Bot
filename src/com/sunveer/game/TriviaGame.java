@@ -8,7 +8,7 @@ import com.sunveer.game.storage.TriviaGameStorage;
 import java.util.*;
 
 public class TriviaGame {
-    private static final int MAX_ANSWERS = 3;
+    private static final int MAX_ANSWERS = 2;
 
     private TriviaGameStorage tgs;
 
@@ -29,18 +29,21 @@ public class TriviaGame {
     public void submitAnswer(String id, String answer)
             throws QuestionExpiredException,
             IncorrectAnswerException,
+            AlreadyAnsweredException,
             InternalServerException {
         try {
+            Map<String, Integer> currentScores = tgs.getCurrentQuestionScores();
+            if (currentScores.containsKey(id)) throw new AlreadyAnsweredException();
             if (!answerIsCorrect(answer)) throw new IncorrectAnswerException();
 
-            int numAnswers = tgs.getCurrentQuestionScores().size();
+            int numAnswers = currentScores.size();
             if (numAnswers >= MAX_ANSWERS) {
                 tgs.endQuestion();
-                startNewQuestion();
+                System.out.println("yeah");
                 throw new QuestionExpiredException();
             }
             tgs.incrementScore(id, MAX_ANSWERS - numAnswers);
-        } catch (NoQuestionInSessionException | QuestionRunningException e) {
+        } catch (NoQuestionInSessionException e) {
             throw new QuestionExpiredException();
         } catch (StorageException e) {
             throw new InternalServerException();

@@ -78,6 +78,8 @@ public class TriviaBotResponder implements Responder {
             return "Incorrect Answer.";
         } catch (QuestionExpiredException e) {
             return "No Question In Session Right Now!";
+        } catch (AlreadyAnsweredException e) {
+            return String.format("%s, you already answered correctly!", id);
         }
     }
 
