@@ -37,12 +37,13 @@ public class TriviaGame {
             if (!answerIsCorrect(answer)) throw new IncorrectAnswerException();
 
             int numAnswers = currentScores.size();
-            if (numAnswers >= MAX_ANSWERS) {
+            if (numAnswers + 1 < MAX_ANSWERS) {
+                tgs.incrementScore(id, MAX_ANSWERS - numAnswers);
+            } else if (numAnswers + 1 == MAX_ANSWERS) {
                 tgs.endQuestion();
-                System.out.println("yeah");
+            } else {
                 throw new QuestionExpiredException();
             }
-            tgs.incrementScore(id, MAX_ANSWERS - numAnswers);
         } catch (NoQuestionInSessionException e) {
             throw new QuestionExpiredException();
         } catch (StorageException e) {

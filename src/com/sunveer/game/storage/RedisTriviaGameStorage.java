@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class RedisTriviaGameStorage implements TriviaGameStorage{
     private static final String SCORE_KEY = "scores";
-    private static final String CURRENT_GAME_KEY = "current_game";
+    private static final String CURRENT_GAME_KEY = "current_game2";
     private static final String CURRENT_QUESTION_TEXT_KEY = "current_question";
     private static final String CURRENT_ANSWER_TEXT_KEY = "current_answer";
 
@@ -29,15 +29,21 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         }
     }
 
+    private void printQuestionAndAnswer() {
+        try {
+            System.out.println(getCurrentQuestion().questionText());
+            System.out.println(getCurrentQuestion().answerText());
+        } catch (Exception e) {
+            System.out.println("Could not get current question to print internally");
+        }
+    }
+
     private void initializeCurrentGameCode() throws JedisException {
         String currentGameCode = jedis.get(CURRENT_GAME_KEY);
         if (currentGameCode == null) {
             try {
-                this.currentGameCode = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                jedis.set(CURRENT_GAME_KEY, this.currentGameCode);
                 Question nextQuestion = QuestionCreator.newQuestion();
-                jedis.set(CURRENT_QUESTION_TEXT_KEY, nextQuestion.questionText());
-                jedis.set(CURRENT_ANSWER_TEXT_KEY, nextQuestion.answerText());
+                setQuestion(nextQuestion);
                 return;
             } catch (QuestionNotAvailableException e) {
                 throw new RuntimeException("Question Not Available", e);
@@ -73,12 +79,20 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         if (questionIsInSession()) throw new QuestionInSessionException();
 
         try {
-            jedis.set(CURRENT_GAME_KEY, LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-            jedis.set(CURRENT_QUESTION_TEXT_KEY, question.questionText());
-            jedis.set(CURRENT_ANSWER_TEXT_KEY, question.answerText());
+            setQuestion(question);
         } catch (JedisException e) {
             throw new StorageException();
         }
+    }
+
+    private void setQuestion(Question question) throws JedisException {
+        String formattedTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        this.currentGameCode = formattedTime;
+        jedis.set(CURRENT_GAME_KEY, formattedTime);
+        jedis.set(CURRENT_QUESTION_TEXT_KEY, question.questionText());
+        jedis.set(CURRENT_ANSWER_TEXT_KEY, question.answerText());
+
+        printQuestionAndAnswer();
     }
 
     @Override
