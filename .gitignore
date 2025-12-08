@@ -12,3 +12,6 @@
 
 # Sensitive Information
 *.env
+
+# Database Files
+*.rdb

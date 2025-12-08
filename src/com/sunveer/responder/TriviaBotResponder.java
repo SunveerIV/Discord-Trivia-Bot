@@ -21,7 +21,8 @@ public class TriviaBotResponder implements Responder {
         } catch (InternalServerException e) {
             return ERROR_MESSAGE;
         } catch (QuestionExpiredException e) {
-            return "Welcome! Type `!start` to start a game!";
+            return "Welcome! Type `!start` to start a game!\n" +
+                    "Type `!help` for a list of commands!";
         }
     }
 
@@ -81,7 +82,7 @@ public class TriviaBotResponder implements Responder {
             game.submitAnswer(id, answer);
             return String.format(":white_check_mark: Correct, %s!", id);
         } catch (IncorrectAnswerException e) {
-            return "Incorrect Answer.";
+            return String.format(":warning: Incorrect, %s!", id);
         } catch (QuestionExpiredException e) {
             return "No Question In Session Right Now!";
         } catch (AlreadyAnsweredException e) {

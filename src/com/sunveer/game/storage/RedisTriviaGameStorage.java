@@ -51,6 +51,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         }
 
         this.currentGameCode = currentGameCode;
+        printQuestionAndAnswer();
     }
 
     @Override
