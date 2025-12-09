@@ -32,7 +32,7 @@ public class TriviaGame {
             AlreadyAnsweredException,
             InternalServerException {
         try {
-            Map<String, Integer> currentScores = tgs.getCurrentQuestionScores();
+            Map<String, Integer> currentScores = tgs.getScores().currentQuestionScores();
             if (currentScores.containsKey(id)) throw new AlreadyAnsweredException();
             if (!answerIsCorrect(answer)) throw new IncorrectAnswerException();
 
@@ -64,18 +64,15 @@ public class TriviaGame {
     public int getScore(String id) throws InternalServerException{
 
         try {
-            Integer value = tgs.getTotalScores().get(id);
-            return value == null ? 0 : value;
+            return tgs.getScores().scoreOfId(id);
         } catch (StorageException e) {
             throw new InternalServerException();
         }
     }
 
-    public Map<String, Integer> getCurrentQuestionLeaderboard() throws InternalServerException, QuestionExpiredException {
+    public Map<String, Integer> getCurrentQuestionLeaderboard() throws InternalServerException {
         try {
-            return tgs.getCurrentQuestionScores();
-        } catch (NoQuestionInSessionException e) {
-            throw new QuestionExpiredException();
+            return tgs.getScores().currentQuestionScores();
         } catch (StorageException e) {
             throw new InternalServerException();
         }
@@ -83,7 +80,7 @@ public class TriviaGame {
 
     public Map<String, Integer> getTotalLeaderboard() throws InternalServerException {
         try {
-            return tgs.getTotalScores();
+            return tgs.getScores().totalScores();
         } catch (StorageException e) {
             throw new InternalServerException();
         }

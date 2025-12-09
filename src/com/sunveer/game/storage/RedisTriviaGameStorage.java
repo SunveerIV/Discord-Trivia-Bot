@@ -119,33 +119,29 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     }
 
     @Override
-    public Map<String, Integer> getTotalScores() throws StorageException {
+    public Scores getScores() throws StorageException {
         try {
-            Map<String, String> map = jedis.hgetAll(SCORE_KEY);
-            Map<String, Integer> scores = new HashMap<>();
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                scores.put(entry.getKey(), parseOrZero(entry.getValue()));
+            Map<String, Integer> totalScores = formatStringMap(jedis.hgetAll(SCORE_KEY));
+
+            Map<String, Integer> currentQuestionScores;
+            if (currentGameCode == null) {
+                currentQuestionScores = new HashMap<>();
+            } else {
+                currentQuestionScores = formatStringMap(jedis.hgetAll(currentGameCode));
             }
-            return scores;
+
+            return new Scores(totalScores, currentQuestionScores);
         } catch (JedisException e) {
             throw new StorageException();
         }
     }
 
-    @Override
-    public Map<String, Integer> getCurrentQuestionScores() throws StorageException, NoQuestionInSessionException {
-        if (!questionIsInSession()) throw new NoQuestionInSessionException();
-
-        try {
-            Map<String, String> map = jedis.hgetAll(currentGameCode);
-            Map<String, Integer> scores = new HashMap<>();
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                scores.put(entry.getKey(), parseOrZero(entry.getValue()));
-            }
-            return scores;
-        } catch (JedisException e) {
-            throw new StorageException();
+    private Map<String, Integer> formatStringMap(Map<String, String> input) {
+        Map<String, Integer> totalScores = new HashMap<>();
+        for (Map.Entry<String, String> entry : input.entrySet()) {
+            totalScores.put(entry.getKey(), parseOrZero(entry.getValue()));
         }
+        return totalScores;
     }
 
     private boolean questionIsInSession() {
