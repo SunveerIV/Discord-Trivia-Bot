@@ -16,23 +16,20 @@ public class Main {
 
     public static void main(String[] args) {
         initializeDotenv();
-        String apiNinjaskey = initializeApiNinjasKey();
-        TriviaGameStorage storage = initializeStorage(apiNinjaskey);
-        String token = dotenv.get("DISCORD_TOKEN");
 
-        String channelName = dotenv.get("CHANNEL_NAME");
+        String apiNinjasKey = initializeApiNinjasKey();
+        TriviaGameStorage storage = initializeStorage(apiNinjasKey);
+        TriviaGame game = initializeGame(storage);
+        Responder responder = initializeResponder(game);
 
-        TriviaGame tg = new TriviaGame(storage);
-        Responder tbr = new TriviaBotResponder(tg);
-        new Bot(token, tbr, channelName);
+        initializeBot(responder);
     }
 
     private static void initializeDotenv() {
         try {
             dotenv = Dotenv.load();
         } catch (DotenvException e) {
-            System.err.println("Could not load dotenv. Exiting.");
-            System.exit(1);
+            throw new RuntimeException("Could not load dotenv. Exiting.", e);
         }
     }
 
@@ -40,8 +37,8 @@ public class Main {
         String host = dotenv.get("HOST");
         String port = dotenv.get("PORT");
 
-        if (host == null) throw new RuntimeException("IP is null! Check dotenv!");
-        if (port == null) throw new RuntimeException("Port is null! Check dotenv!");
+        if (host == null) throw new IllegalArgumentException("IP is null! Check dotenv!");
+        if (port == null) throw new IllegalArgumentException("Port is null! Check dotenv!");
 
         try {
             return new RedisTriviaGameStorage(host, Integer.parseInt(port), new APIQuestionCreator(apiNinjaskey));
@@ -50,14 +47,27 @@ public class Main {
         }
     }
 
+    private static TriviaGame initializeGame(TriviaGameStorage storage) {
+        return new TriviaGame(storage);
+    }
+
+    private static Responder initializeResponder(TriviaGame game) {
+        return new TriviaBotResponder(game);
+    }
+
     private static String initializeApiNinjasKey() {
-        String apiKey;
-        apiKey = dotenv.get("API_NINJAS_KEY");
+        String apiKey = dotenv.get("API_NINJAS_KEY");
+
+        if (apiKey == null) throw new IllegalArgumentException("API Ninjas Key could not be loaded. Stopping Process.");
+
         System.out.println("API Ninjas Key Loaded Successfully!");
-        if (apiKey == null) {
-            System.err.println("API Ninjas Key could not be loaded. Stopping Process.");
-            System.exit(1);
-        }
         return apiKey;
+    }
+
+    private static void initializeBot(Responder responder) {
+        String token = dotenv.get("DISCORD_TOKEN");
+        String channelName = dotenv.get("CHANNEL_NAME");
+
+        new Bot(token, responder, channelName);
     }
 }
