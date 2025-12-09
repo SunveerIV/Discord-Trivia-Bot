@@ -2,8 +2,6 @@ package com.sunveer.game;
 
 import com.github.fppt.jedismock.RedisServer;
 import com.sunveer.game.question.MockQuestionCreator;
-import com.sunveer.game.question.Question;
-import com.sunveer.game.storage.QuestionInSessionException;
 import com.sunveer.game.storage.RedisTriviaGameStorage;
 import com.sunveer.game.storage.TriviaGameStorage;
 import org.junit.jupiter.api.Test;
@@ -13,6 +11,20 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TriviaGameTest {
+
+    @Test
+    void testStartingQuestionWhenQuestionAlreadyInSession() throws Exception {
+        RedisServer rs = new RedisServer(1);
+        rs.start();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
+        TriviaGame tg = new TriviaGame(tgs);
+
+        tg.startNewQuestion();
+
+        assertThrows(QuestionRunningException.class, tg::startNewQuestion);
+
+        rs.stop();
+    }
 
     @Test
     void testSubmittingAnswerWithQuestionInSession() throws Exception {
