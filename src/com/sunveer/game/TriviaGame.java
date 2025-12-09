@@ -26,6 +26,15 @@ public class TriviaGame {
         }
     }
 
+    /**
+     * Submits an answer for the given id
+     * @param id Identification
+     * @param answer Answer
+     * @throws QuestionExpiredException if there is no question available
+     * @throws IncorrectAnswerException if the answer is incorrect
+     * @throws AlreadyAnsweredException if the submitter already submitted an answer
+     * @throws InternalServerException if something goes wrong internally
+     */
     public void submitAnswer(String id, String answer)
             throws QuestionExpiredException,
             IncorrectAnswerException,
@@ -52,6 +61,12 @@ public class TriviaGame {
         }
     }
 
+    /**
+     * Starts a new question if there are no other questions available
+     * @return the question
+     * @throws InternalServerException if something goes wrong internally
+     * @throws QuestionRunningException if there is already a question running
+     */
     public String startNewQuestion() throws InternalServerException, QuestionRunningException {
         try {
             return tgs.startNewQuestion();
@@ -71,6 +86,11 @@ public class TriviaGame {
         }
     }
 
+    /**
+     * returns a map of the current question's scores, NOT the total scores
+     * @return Map
+     * @throws InternalServerException if something goes wrong internally
+     */
     public Map<String, Integer> getCurrentQuestionLeaderboard() throws InternalServerException {
         try {
             return tgs.getScores().currentQuestionScores();
