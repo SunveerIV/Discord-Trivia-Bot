@@ -15,26 +15,10 @@ public class APIQuestionCreator implements QuestionCreator {
 
 
     private static final String URL = "https://api.api-ninjas.com/v1/trivia";
-    private static String API_KEY;
+    private String apiKey;
 
-    static {
-        initializeApiKey();
-    }
-
-    private static void initializeApiKey() {
-        try {
-            Dotenv dotenv = Dotenv.load();
-            API_KEY = dotenv.get("API_NINJAS_KEY");
-            System.out.println("API Ninjas Key Loaded Successfully!");
-        } catch (DotenvException e) {
-            System.err.println("Dotenv could not be loaded. Stopping Process.");
-            System.exit(1);
-        }
-
-        if (API_KEY == null) {
-            System.err.println("API Ninjas Key could not be loaded. Stopping Process.");
-            System.exit(1);
-        }
+    public APIQuestionCreator(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     @Override
@@ -44,7 +28,7 @@ public class APIQuestionCreator implements QuestionCreator {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(URL))
-                    .header("X-Api-Key", API_KEY)
+                    .header("X-Api-Key", apiKey)
                     .GET()
                     .build();
 
