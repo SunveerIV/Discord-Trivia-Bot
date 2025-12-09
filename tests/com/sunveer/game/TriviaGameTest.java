@@ -52,6 +52,32 @@ class TriviaGameTest {
     }
 
     @Test
+    void testSamePersonSubmittingMultipleTimes() throws Exception {
+        RedisServer rs = new RedisServer(1);
+        rs.start();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
+        TriviaGame tg = new TriviaGame(tgs);
+
+        tg.startNewQuestion();
+
+        String id1 = "a";
+
+        assertThrows(IncorrectAnswerException.class, () -> {
+            tg.submitAnswer(id1, "Incorrect Answer oauwroagrgoaeugauorghnboug");
+        });
+
+        assertDoesNotThrow(() -> {
+            tg.submitAnswer(id1, "Because.");
+        });
+
+        assertThrows(AlreadyAnsweredException.class, () -> {
+            tg.submitAnswer(id1, "Because.");
+        });
+
+        rs.stop();
+    }
+
+    @Test
     void testTwoPeoplePlayingNormally() throws Exception {
         RedisServer rs = new RedisServer(2);
         rs.start();
