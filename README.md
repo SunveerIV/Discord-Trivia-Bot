@@ -11,6 +11,9 @@ This includes:
 - Your brain
 - Other people's answers
 
+On submission, if you were the **first** to answer, you get 2 points.  
+If you were the **second** to answer, you get 1 point.
+
 ### Requirements
 - You must have a Discord Bot API Key
 - You must have an [API Ninjas Key](https://api-ninjas.com/)
