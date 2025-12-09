@@ -3,9 +3,12 @@ package com.sunveer.game;
 import com.github.fppt.jedismock.RedisServer;
 import com.sunveer.game.question.MockQuestionCreator;
 import com.sunveer.game.question.Question;
+import com.sunveer.game.storage.QuestionInSessionException;
 import com.sunveer.game.storage.RedisTriviaGameStorage;
 import com.sunveer.game.storage.TriviaGameStorage;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +35,45 @@ class TriviaGameTest {
         assertDoesNotThrow(() -> {
             tg.getCurrentQuestionLeaderboard();
         });
+
+        rs.stop();
+    }
+
+    @Test
+    void testTwoPeoplePlayingNormally() throws Exception {
+        RedisServer rs = new RedisServer(2);
+        rs.start();
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
+        TriviaGame game = new TriviaGame(tgs);
+
+        game.startNewQuestion();
+
+        String id1 = "a";
+        String id2 = "b";
+        String id3 = "c";
+
+        assertDoesNotThrow(() -> {
+            game.submitAnswer(id1, "Because.");
+        });
+
+        assertDoesNotThrow(() -> {
+            game.submitAnswer(id2, "Because.");
+        });
+
+        assertThrows(QuestionExpiredException.class, () -> {
+            game.submitAnswer(id3, "Because.");
+        });
+
+        Map<String, Integer> totalScores = game.getTotalLeaderboard();
+
+        for(Map.Entry<String, Integer> entry : totalScores.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
+
+        assertEquals(2, totalScores.size());
+        assertEquals(2, totalScores.get(id1));
+        assertEquals(1, totalScores.get(id2));
 
         rs.stop();
     }
