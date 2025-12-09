@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class RedisTriviaGameStorage implements TriviaGameStorage{
     private static final String SCORE_KEY = "scores";
-    private static final String CURRENT_GAME_KEY = "current_game2";
+    private static final String CURRENT_GAME_KEY = "current_game";
     private static final String CURRENT_QUESTION_TEXT_KEY = "current_question";
     private static final String CURRENT_ANSWER_TEXT_KEY = "current_answer";
 
