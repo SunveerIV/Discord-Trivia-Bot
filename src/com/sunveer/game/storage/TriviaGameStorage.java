@@ -1,5 +1,7 @@
 package com.sunveer.game.storage;
 
+import com.sunveer.game.Scores;
+
 public interface TriviaGameStorage {
     com.sunveer.game.question.Question getCurrentQuestion() throws StorageException, NoQuestionInSessionException;
 

@@ -1,5 +1,6 @@
 package com.sunveer.game.storage;
 
+import com.sunveer.game.Scores;
 import com.sunveer.game.question.Question;
 import com.sunveer.game.question.QuestionCreator;
 import com.sunveer.game.question.QuestionNotAvailableException;

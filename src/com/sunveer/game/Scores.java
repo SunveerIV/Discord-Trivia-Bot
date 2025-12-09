@@ -1,4 +1,4 @@
-package com.sunveer.game.storage;
+package com.sunveer.game;
 
 import java.util.Map;
 
