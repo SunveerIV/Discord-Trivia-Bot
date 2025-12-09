@@ -1,7 +1,10 @@
 package com.sunveer.game.storage;
 
 import com.github.fppt.jedismock.RedisServer;
+import com.sunveer.game.question.APIQuestionCreator;
+import com.sunveer.game.question.MockQuestionCreator;
 import com.sunveer.game.question.Question;
+import com.sunveer.game.question.QuestionCreator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -11,23 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RedisTriviaGameStorageTest {
 
-    static final Question MOCK_QUESTION = new Question() {
-        @Override
-        public String questionText() {
-            return "Why?";
-        }
-
-        @Override
-        public String answerText() {
-            return "Because.";
-        }
-    };
-
     @Test
     void testNewRedisStorageIsEmpty() throws Exception {
         RedisServer rs = new RedisServer(1);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
         assertEquals(0, tgs.getTotalScores().size());
 
@@ -38,11 +29,11 @@ class RedisTriviaGameStorageTest {
     void testGettingScoreFromEmptyKey() throws Exception {
         RedisServer rs = new RedisServer(2);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
         String id = "Sunveer1";
 
-        assertEquals(0, tgs.getTotalScores().get(id));
+        assertNull(tgs.getTotalScores().get(id));
         assertEquals(0, tgs.getTotalScores().size());
 
         rs.stop();
@@ -52,27 +43,12 @@ class RedisTriviaGameStorageTest {
     void testStartingQuestionTwiceBeforeEnding() throws StorageException, IOException {
         RedisServer rs = new RedisServer(4352);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
         assertDoesNotThrow(() -> {
-            tgs.startQuestion(MOCK_QUESTION);
+            tgs.startNewQuestion();
         });
-        assertThrows(QuestionInSessionException.class, () -> {
-            tgs.startQuestion(MOCK_QUESTION);
-        });
-
-        rs.stop();
-    }
-
-    @Test
-    void testEndingQuestionBeforeStarting() throws StorageException, IOException{
-        RedisServer rs = new RedisServer(432);
-        rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
-
-        assertThrows(NoQuestionInSessionException.class, () -> {
-            tgs.endQuestion();
-        });
+        assertThrows(QuestionInSessionException.class, tgs::startNewQuestion);
 
         rs.stop();
     }
@@ -81,14 +57,11 @@ class RedisTriviaGameStorageTest {
     void testStartingThenEndingThenAttemptingScoreIncrements() throws StorageException, IOException {
         RedisServer rs = new RedisServer(43233);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
-        assertDoesNotThrow(() -> {
-            tgs.startQuestion(MOCK_QUESTION);
-        });
-        assertDoesNotThrow(() -> {
-            tgs.endQuestion();
-        });
+        assertDoesNotThrow(tgs::startNewQuestion);
+
+        tgs.endQuestion();
 
         assertThrows(NoQuestionInSessionException.class, () -> {
             tgs.incrementScore("a", 3);
@@ -101,7 +74,7 @@ class RedisTriviaGameStorageTest {
     void testAddingOneScoreWhenNoQuestionInSession() throws StorageException, IOException {
         RedisServer rs = new RedisServer(3);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
         String id = "Sunveer2";
 
@@ -116,9 +89,9 @@ class RedisTriviaGameStorageTest {
     void testAddingOneScoreWhenQuestionInSession() throws Exception {
         RedisServer rs = new RedisServer(4);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
-        tgs.startQuestion(MOCK_QUESTION);
+        tgs.startNewQuestion();
         String id = "Sunveer3";
         tgs.incrementScore(id, 2);
 
@@ -132,9 +105,9 @@ class RedisTriviaGameStorageTest {
     void testAddingMultipleScoresWhenQuestionInSession() throws Exception {
         RedisServer rs = new RedisServer(5);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
-        tgs.startQuestion(MOCK_QUESTION);
+        tgs.startNewQuestion();
 
         String id1 = "Sunveer3";
         String id2 = "Gortiz3";
@@ -161,9 +134,9 @@ class RedisTriviaGameStorageTest {
     void testFullGameWithTwoQuestions() throws Exception {
         RedisServer rs = new RedisServer(93);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
-        tgs.startQuestion(MOCK_QUESTION);
+        tgs.startNewQuestion();
 
         String id1 = "Sunveer3";
         String id2 = "Gortiz3";
@@ -173,7 +146,7 @@ class RedisTriviaGameStorageTest {
 
         tgs.endQuestion();
 
-        tgs.startQuestion(MOCK_QUESTION);
+        tgs.startNewQuestion();
         tgs.incrementScore(id1, 1);
         tgs.incrementScore(id2, 3);
 
@@ -189,21 +162,15 @@ class RedisTriviaGameStorageTest {
     void testQuestionGetsDeletedAfterEndingQuestion() throws Exception{
         RedisServer rs = new RedisServer(93);
         rs.start();
-        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort());
+        TriviaGameStorage tgs = new RedisTriviaGameStorage(rs.getHost(), rs.getBindPort(), new MockQuestionCreator());
 
-        assertDoesNotThrow(() -> {
-            tgs.startQuestion(MOCK_QUESTION);
-        });
+        assertDoesNotThrow(tgs::startNewQuestion);
         Question currentQuestion = tgs.getCurrentQuestion();
         assertEquals("Why?", currentQuestion.questionText());
         assertEquals("Because.", currentQuestion.answerText());
 
-        assertDoesNotThrow(() -> {
-            tgs.endQuestion();
-        });
-        assertThrows(NoQuestionInSessionException.class, () -> {
-            tgs.getCurrentQuestion();
-        });
+        assertDoesNotThrow(tgs::endQuestion);
+        assertThrows(NoQuestionInSessionException.class, tgs::getCurrentQuestion);
 
         rs.stop();
     }

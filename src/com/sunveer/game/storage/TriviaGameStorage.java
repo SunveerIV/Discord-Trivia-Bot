@@ -3,7 +3,7 @@ package com.sunveer.game.storage;
 public interface TriviaGameStorage {
     com.sunveer.game.question.Question getCurrentQuestion() throws StorageException, NoQuestionInSessionException;
 
-    void startQuestion(com.sunveer.game.question.Question question) throws StorageException, QuestionInSessionException;
+    String startNewQuestion() throws StorageException, QuestionInSessionException;
 
     void endQuestion() throws StorageException;
 

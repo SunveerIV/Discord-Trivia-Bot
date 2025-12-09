@@ -19,12 +19,15 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
 
     private Jedis jedis;
     private String currentGameCode;
+    private QuestionCreator questionCreator;
 
-    public RedisTriviaGameStorage(String ip, int port) throws StorageException {
+    public RedisTriviaGameStorage(String ip, int port, QuestionCreator questionCreator) throws StorageException {
+        this.questionCreator = questionCreator;
+
         try {
             jedis = new Jedis(ip, port);
             initializeCurrentGameCode();
-        } catch (JedisException e) {
+        } catch (JedisException | QuestionNotAvailableException e) {
             throw new StorageException();
         }
     }
@@ -38,16 +41,11 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         }
     }
 
-    private void initializeCurrentGameCode() throws JedisException {
+    private void initializeCurrentGameCode() throws JedisException, QuestionNotAvailableException {
         String currentGameCode = jedis.get(CURRENT_GAME_KEY);
         if (currentGameCode == null) {
-            try {
-                Question nextQuestion = QuestionCreator.newQuestion();
-                setQuestion(nextQuestion);
-                return;
-            } catch (QuestionNotAvailableException e) {
-                throw new RuntimeException("Question Not Available", e);
-            }
+            printQuestionAndAnswer();
+            return;
         }
 
         this.currentGameCode = currentGameCode;
@@ -76,17 +74,17 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
     }
 
     @Override
-    public void startQuestion(Question question) throws StorageException, QuestionInSessionException {
+    public String startNewQuestion() throws StorageException, QuestionInSessionException {
         if (questionIsInSession()) throw new QuestionInSessionException();
 
         try {
-            setQuestion(question);
-        } catch (JedisException e) {
+            return setQuestion(questionCreator.newQuestion());
+        } catch (JedisException | QuestionNotAvailableException e) {
             throw new StorageException();
         }
     }
 
-    private void setQuestion(Question question) throws JedisException {
+    private String setQuestion(Question question) throws JedisException {
         String formattedTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         this.currentGameCode = formattedTime;
         jedis.set(CURRENT_GAME_KEY, formattedTime);
@@ -94,6 +92,7 @@ public class RedisTriviaGameStorage implements TriviaGameStorage{
         jedis.set(CURRENT_ANSWER_TEXT_KEY, question.answerText());
 
         printQuestionAndAnswer();
+        return question.questionText();
     }
 
     @Override

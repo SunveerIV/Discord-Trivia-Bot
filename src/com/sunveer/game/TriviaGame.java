@@ -1,8 +1,5 @@
 package com.sunveer.game;
 
-import com.sunveer.game.question.Question;
-import com.sunveer.game.question.QuestionCreator;
-import com.sunveer.game.question.QuestionNotAvailableException;
 import com.sunveer.game.storage.NoQuestionInSessionException;
 import com.sunveer.game.storage.QuestionInSessionException;
 import com.sunveer.game.storage.StorageException;
@@ -56,10 +53,8 @@ public class TriviaGame {
 
     public String startNewQuestion() throws InternalServerException, QuestionRunningException {
         try {
-            Question newQuestion = QuestionCreator.newQuestion();
-            tgs.startQuestion(newQuestion);
-            return newQuestion.questionText();
-        } catch (QuestionNotAvailableException | StorageException e) {
+            return tgs.startNewQuestion();
+        } catch (StorageException e) {
             throw new InternalServerException();
         } catch (QuestionInSessionException e) {
             throw new QuestionRunningException(e);
