@@ -11,9 +11,11 @@ import io.github.cdimascio.dotenv.DotenvException;
 
 public class Main {
 
+    private static Dotenv dotenv;
 
     public static void main(String[] args) throws Exception {
-        Dotenv dotenv = Dotenv.load();
+        initializeDotenv();
+
         String token = dotenv.get("DISCORD_TOKEN");
 
         String channelName = dotenv.get("CHANNEL_NAME");
@@ -29,19 +31,23 @@ public class Main {
         new Bot(token, tbr, channelName);
     }
 
-    private static String initializeApiNinjasKey() {
+    private static void initializeDotenv() {
         try {
-            String apiKey;
-            Dotenv dotenv = Dotenv.load();
-            apiKey = dotenv.get("API_NINJAS_KEY");
-            System.out.println("API Ninjas Key Loaded Successfully!");
-            if (apiKey == null) {
-                System.err.println("API Ninjas Key could not be loaded. Stopping Process.");
-                System.exit(1);
-            }
-            return apiKey;
+            dotenv = Dotenv.load();
         } catch (DotenvException e) {
-            throw new RuntimeException("Dotenv could not be loaded. Stopping Process.", e);
+            System.err.println("Could not load dotenv. Exiting.");
+            System.exit(1);
         }
+    }
+
+    private static String initializeApiNinjasKey() {
+        String apiKey;
+        apiKey = dotenv.get("API_NINJAS_KEY");
+        System.out.println("API Ninjas Key Loaded Successfully!");
+        if (apiKey == null) {
+            System.err.println("API Ninjas Key could not be loaded. Stopping Process.");
+            System.exit(1);
+        }
+        return apiKey;
     }
 }
