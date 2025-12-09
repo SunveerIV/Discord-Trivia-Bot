@@ -1,4 +1,4 @@
-package com.sunveer.game;
+package com.sunveer.game.question;
 
 public interface Question {
     String questionText();

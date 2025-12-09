@@ -1,6 +1,7 @@
 package com.sunveer.game;
 
 import com.github.fppt.jedismock.RedisServer;
+import com.sunveer.game.question.Question;
 import com.sunveer.game.storage.RedisTriviaGameStorage;
 import com.sunveer.game.storage.TriviaGameStorage;
 import org.junit.jupiter.api.Test;

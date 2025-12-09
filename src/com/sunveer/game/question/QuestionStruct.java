@@ -1,4 +1,4 @@
-package com.sunveer.game;
+package com.sunveer.game.question;
 
 import com.google.gson.annotations.SerializedName;
 

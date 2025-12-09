@@ -1,8 +1,8 @@
 package com.sunveer.game.storage;
 
-import com.sunveer.game.Question;
-import com.sunveer.game.QuestionCreator;
-import com.sunveer.game.QuestionNotAvailableException;
+import com.sunveer.game.question.Question;
+import com.sunveer.game.question.QuestionCreator;
+import com.sunveer.game.question.QuestionNotAvailableException;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 

@@ -1,7 +1,7 @@
 package com.sunveer.game.storage;
 
 import com.github.fppt.jedismock.RedisServer;
-import com.sunveer.game.Question;
+import com.sunveer.game.question.Question;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

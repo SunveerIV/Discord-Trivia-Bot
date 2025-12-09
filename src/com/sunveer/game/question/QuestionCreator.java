@@ -1,7 +1,6 @@
-package com.sunveer.game;
+package com.sunveer.game.question;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvException;
 

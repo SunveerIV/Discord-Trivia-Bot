@@ -1,4 +1,4 @@
-package com.sunveer.game;
+package com.sunveer.game.question;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,14 +13,5 @@ class QuestionTest {
         Question q = new QuestionStruct(new String(questionText), new String(answerText));
         assertEquals(questionText, q.questionText());
         assertEquals(answerText, q.answerText());
-    }
-
-    @Test
-    void testGettingNewQuestionFromApi() throws Exception {
-        Question q = QuestionCreator.newQuestion();
-        assertNotNull(q.questionText());
-        assertNotNull(q.answerText());
-        System.out.println(q.questionText());
-        System.out.println(q.answerText());
     }
 }

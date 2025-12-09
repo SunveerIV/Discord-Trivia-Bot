@@ -1,9 +1,9 @@
 package com.sunveer.game.storage;
 
 public interface TriviaGameStorage {
-    com.sunveer.game.Question getCurrentQuestion() throws StorageException, NoQuestionInSessionException;
+    com.sunveer.game.question.Question getCurrentQuestion() throws StorageException, NoQuestionInSessionException;
 
-    void startQuestion(com.sunveer.game.Question question) throws StorageException, QuestionInSessionException;
+    void startQuestion(com.sunveer.game.question.Question question) throws StorageException, QuestionInSessionException;
 
     void endQuestion() throws StorageException;
 
